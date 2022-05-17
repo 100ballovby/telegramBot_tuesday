@@ -2,7 +2,7 @@ import telebot
 import requests as r
 
 
-def get_rates(base):
+def get_currencies():
     url_codes = 'https://api.coinbase.com/v2/currencies'
     response_code = r.get(url_codes)
     data = response_code.json()
@@ -32,7 +32,7 @@ def help_message(message):
 
 @bot.message_handler(content_types=['text'])
 def get_codes(message):
-    codes = get_rates('')
+    codes = get_currencies()
     if message.text.startswith('/cur_code'):  # если текст сообщения начинается с /cur_code
         try:
             user_message = message.text.split()  # превратить сообщение пользователя в список
@@ -40,6 +40,7 @@ def get_codes(message):
             bot.send_message(message.chat.id, codes[user_message[1].upper()])
         except (ValueError, TypeError, IndexError, SyntaxError, KeyError):
             bot.send_message(message.chat.id, 'Такой валюты нет!')
+
 
 
 bot.polling(none_stop=True, interval=0)
