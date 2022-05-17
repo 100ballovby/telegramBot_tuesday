@@ -24,6 +24,7 @@ def get_rates(base, amount, target):
     except:
         return None
 
+
 bot = telebot.TeleBot('')
 
 
@@ -51,7 +52,18 @@ def get_codes(message):
             bot.send_message(message.chat.id, codes[user_message[1].upper()])
         except (ValueError, TypeError, IndexError, SyntaxError, KeyError):
             bot.send_message(message.chat.id, 'Такой валюты нет!')
-
+    elif message.text.startswith('/exchange'):
+        user_message = message.text.split()
+        result = get_rates(base=user_message[2],
+                           amount=float(user_message[1]),
+                           target=user_message[4])
+        if (result is not None) and (result != 0.0):  # если функция отдала значения и это не 0
+            base = codes[user_message[2].upper()]
+            target = codes[user_message[4].upper()]
+            answer = f'{user_message[1]} {base}\nэто {result} {target}💰'
+            bot.send_message(message.chat.id, answer)
+        else:
+            bot.send_message(message.chat.id, 'Ошибка')
 
 
 bot.polling(none_stop=True, interval=0)
