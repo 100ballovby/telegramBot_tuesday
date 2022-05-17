@@ -15,14 +15,14 @@ def get_currencies():
 
 def get_rates(base, amount, target):
     url_codes = f'https://api.coinbase.com/v2/exchange-rates?currency={base.upper()}'
-    response_code = r.get(url_codes)
-    data = response_code.json()
-    rates = data['data']['rates']
-
-    result = amount * float(rates[target.upper()])
-    return result
-
-print(get_rates('USD', 10, 'EUR'))
+    try:
+        response_code = r.get(url_codes)
+        data = response_code.json()
+        rates = data['data']['rates']
+        result = round(amount * float(rates[target.upper()]), 2)
+        return result
+    except:
+        return None
 
 bot = telebot.TeleBot('')
 
