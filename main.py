@@ -1,5 +1,6 @@
 import telebot
 import requests as r
+import os
 
 
 def get_currencies():
@@ -25,7 +26,7 @@ def get_rates(base, amount, target):
         return None
 
 
-bot = telebot.TeleBot('')
+bot = telebot.TeleBot(os.environ.get('BOT_KEY'))
 
 
 @bot.message_handler(commands=['start'])  # что делаем, когда отправили /start
