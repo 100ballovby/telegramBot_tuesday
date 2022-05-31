@@ -18,7 +18,7 @@ def get_weather(city):
         forecast = []  # здесь буду хранить прогнозы
         for line in data['list']:
             date = datetime.fromtimestamp(line['dt'])
-            if date.day in [today.day, today.day + 1]:
+            if date.day in [today.day, today.day + 1] or date.day == 1:
                 day = {
                     'date': datetime.strftime(date, '%d/%m, %H:%M'),
                     'temp': round(line['main']['temp']),

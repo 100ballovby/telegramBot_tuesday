@@ -1,6 +1,34 @@
 import telebot
 import requests as r
 import os
+from datetime import datetime
+
+
+def get_weather(city):
+    url = 'https://api.openweathermap.org/data/2.5/forecast'
+    params = {  # параметры для запроса
+        'q': city.capitalize(),  # Пишет город с большой буквы
+        'appid': os.environ.get('WEATHER_KEY'),
+        'units': 'metric',  # градусы в цельсиях
+        'lang': 'ru'  # русский язык
+    }
+    response = r.get(url, params=params)
+    if response.status_code == 200:  #
+        data = response.json()
+        today = datetime.today()  # сегодняшняя дата и время
+        forecast = []  # здесь буду хранить прогнозы
+        for line in data['list']:
+            date = datetime.fromtimestamp(line['dt'])
+            if (date.hour in [9, 15, 21]) and (date.day in [today.day, today.day + 1] or date.day == 1):
+                day = {
+                    'date': datetime.strftime(date, '%d/%m, %H:%M'),
+                    'temp': round(line['main']['temp']),
+                    'weather': line['weather'][0]['description']
+                }
+                forecast.append(day)
+        return forecast
+    else:
+        return None
 
 
 def get_currencies():
@@ -65,6 +93,16 @@ def get_codes(message):
             bot.send_message(message.chat.id, answer)
         else:
             bot.send_message(message.chat.id, 'Ошибка')
+    elif message.text.startswith('/weather'):
+        user_message = message.text.split()
+        forecast = get_weather(user_message[1])
+        answer = ''
+        try:
+            for line in forecast:
+                answer += f'{line["date"]} {line["weather"]}, {line["temp"]}°С\n'
+        except TypeError:
+            answer = 'Вы ввели город, которого не существует! '
+        bot.send_message(message.chat.id, answer)
 
 
 bot.polling(none_stop=True, interval=0)
