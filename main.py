@@ -71,6 +71,17 @@ def help_message(message):
     bot.send_message(message.chat.id, help_text)
 
 
+@bot.message_handler(commands=['buttons'])
+def button_message(message):
+    layout = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    # ^ выстраиваем область, в которой будут появляться кнопки, область расширяется под количество кнопок
+    b1 = telebot.types.KeyboardButton('Кнопка')  # создаю кнопку
+    b2 = telebot.types.KeyboardButton('Кнопка 2')  # Текст на кнопке - это текст сообщения, которое получит бот
+    layout.add(b1)  # добавляю кнопку в область
+    layout.add(b2)
+    bot.send_message(message.chat.id, 'Выберите', reply_markup=layout)  # передаем кнопки с сообщением
+
+
 @bot.message_handler(content_types=['text'])
 def get_codes(message):
     codes = get_currencies()
@@ -103,6 +114,10 @@ def get_codes(message):
         except TypeError:
             answer = 'Вы ввели город, которого не существует! '
         bot.send_message(message.chat.id, answer)
+    elif message.text == 'Кнопка':
+        bot.send_message(message.chat.id, 'СПС')
+    elif message.text == 'Кнопка 2':
+        bot.send_message(message.chat.id, 'Ну и ладно!')
 
 
 bot.polling(none_stop=True, interval=0)
